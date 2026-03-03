@@ -52,9 +52,14 @@ compdef mosh=ssh
 # Location for completions
 zcompdump="${XDG_CACHE_HOME:-${HOME}/.cache}/zsh/.zcompdump"
 
-# If completions present, then load them
-if [ -f $zsh_dump_file ]; then
-    compinit -d $zcompdump
+# Ensure cache directory exists
+[[ -d "${zcompdump:h}" ]] || mkdir -p "${zcompdump:h}"
+
+# Load completions - only regenerate once per day for performance
+if [[ -f "$zcompdump" ]]; then
+  compinit -d "$zcompdump" -C  # -C skips security check for speed
+else
+  compinit -d "$zcompdump"
 fi
 
 # Perform compinit only once a day.

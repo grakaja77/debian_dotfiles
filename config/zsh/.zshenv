@@ -37,6 +37,13 @@ export ZDOTDIR="${XDG_CONFIG_HOME}/zsh"
 export ZLIB="${ZDOTDIR}/lib"
 export PYENV_ROOT="$HOME/.pyenv"
 
+# NVM directory - prefer XDG location, fall back to home
+if [[ -d "${XDG_CONFIG_HOME}/nvm" ]]; then
+  export NVM_DIR="${XDG_CONFIG_HOME}/nvm"
+elif [[ -d "$HOME/.nvm" ]]; then
+  export NVM_DIR="$HOME/.nvm"
+fi
+
 # source $XDG_CONFIG_HOME/zsh/.zshrc
 
 # Encodings, languges and misc settings

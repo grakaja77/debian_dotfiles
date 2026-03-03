@@ -1,28 +1,34 @@
 #!/usr/bin/env zsh
 
-# Syntax highlighting for commands
-antigen bundle zsh-users/zsh-syntax-highlighting
+# Direct plugin loading - faster than Antigen
+# Plugins are installed by setup-antigen.zsh if missing
 
-# Make and cd into nested directories
-antigen bundle caarlos0/zsh-mkc
+_bundles="${ADOTDIR:-${XDG_CACHE_HOME:-$HOME/.cache}/zsh/antigen}/bundles"
 
-# Quickly jump into frequently used directories
-antigen bundle agkozak/zsh-z
+# Helper to source a plugin file if it exists
+_src() { [[ -f "$1" ]] && source "$1"; }
 
-# Extra zsh completions
-antigen bundle zsh-users/zsh-completions
+# Powerlevel10k theme (instant prompt already loaded in .zshrc)
+_src "$_bundles/romkatv/powerlevel10k/powerlevel10k.zsh-theme"
 
-# Auto suggestions from history
-antigen bundle zsh-users/zsh-autosuggestions
+# Extra completions (add to fpath before compinit)
+[[ -d "$_bundles/zsh-users/zsh-completions/src" ]] && \
+  fpath=("$_bundles/zsh-users/zsh-completions/src" $fpath)
 
-# Pretty directory listings with git support
-antigen bundle supercrabtree/k
+# Directory jumping with zsh-z
+_src "$_bundles/agkozak/zsh-z/zsh-z.plugin.zsh"
 
-# Quickly jump into fequently used directories
-# antigen bundle autojump
+# mkdir + cd in one command
+_src "$_bundles/caarlos0/zsh-mkc/mkc.plugin.zsh"
 
-# Syntax highlighting for cat
-antigen bundle colorize
+# Pretty directory listings
+_src "$_bundles/supercrabtree/k/k.sh"
 
-# Tell antigen that you're done
-antigen apply
+# Autosuggestions (ghost text from history)
+_src "$_bundles/zsh-users/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+# Syntax highlighting (must be last for best results)
+_src "$_bundles/zsh-users/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+unfunction _src 2>/dev/null
+unset _bundles

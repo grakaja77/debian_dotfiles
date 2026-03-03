@@ -1,3 +1,10 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.config/zsh/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
 ######################################################################
 # ~/.config/zsh/.zshrc                                               #
 ######################################################################
@@ -18,18 +25,20 @@ utils_dir="${XDG_CONFIG_HOME}/utils"
 [[ $- != *i* ]] && return
 
 # Import utility functions (if present)
-if [[ -d $utils_dir ]]; then
-  source ${utils_dir}/transfer.sh
-  source ${utils_dir}/matrix.sh
-  source ${utils_dir}/hr.sh
-  source ${utils_dir}/web-search.sh
-  source ${utils_dir}/am-i-online.sh
-  source ${utils_dir}/welcome-banner.sh
-  source ${utils_dir}/color-map.sh
-fi
+# Helper function to safely source files
+function _safe_source() {
+  [[ -f "$1" ]] && source "$1"
+}
 
-# Import P10k config for command prompt
-[[ ! -f ${zsh_dir}/.p10k.zsh ]] || source ${zsh_dir}/.p10k.zsh
+if [[ -d $utils_dir ]]; then
+  _safe_source "${utils_dir}/transfer.sh"
+  _safe_source "${utils_dir}/matrix.sh"
+  _safe_source "${utils_dir}/hr.sh"
+  _safe_source "${utils_dir}/web-search.sh"
+  _safe_source "${utils_dir}/am-i-online.sh"
+  _safe_source "${utils_dir}/welcome-banner.sh"
+  _safe_source "${utils_dir}/color-map.sh"
+fi
 
 # MacOS-specific services
 if [ "$(uname -s)" = "Darwin" ]; then
@@ -57,29 +66,29 @@ fi
 # Source all ZSH config files (if present)
 if [[ -d $zsh_dir ]]; then
   # Import alias files
-  source ${zsh_dir}/aliases/general.zsh
-  source ${zsh_dir}/aliases/git.zsh
-  source ${zsh_dir}/aliases/node-js.zsh
-  source ${zsh_dir}/aliases/rust.zsh
-  source ${zsh_dir}/aliases/flutter.zsh
-  source ${zsh_dir}/aliases/tmux.zsh
-  source ${zsh_dir}/aliases/alias-tips.zsh
+  _safe_source "${zsh_dir}/aliases/general.zsh"
+  _safe_source "${zsh_dir}/aliases/git.zsh"
+  _safe_source "${zsh_dir}/aliases/node-js.zsh"
+  _safe_source "${zsh_dir}/aliases/rust.zsh"
+  _safe_source "${zsh_dir}/aliases/flutter.zsh"
+  _safe_source "${zsh_dir}/aliases/tmux.zsh"
+  _safe_source "${zsh_dir}/aliases/alias-tips.zsh"
 
   # Setup Antigen, and import plugins
-  source ${zsh_dir}/helpers/setup-antigen.zsh
-  source ${zsh_dir}/helpers/import-plugins.zsh
-  source ${zsh_dir}/helpers/misc-stuff.zsh
+  _safe_source "${zsh_dir}/helpers/setup-antigen.zsh"
+  _safe_source "${zsh_dir}/helpers/import-plugins.zsh"
+  _safe_source "${zsh_dir}/helpers/misc-stuff.zsh"
 
   # Configure ZSH stuff
-  source ${zsh_dir}/lib/colors.zsh
-  source ${zsh_dir}/lib/cursor.zsh
-  source ${zsh_dir}/lib/history.zsh
-  source ${zsh_dir}/lib/surround.zsh
-  source ${zsh_dir}/lib/completion.zsh
-  source ${zsh_dir}/lib/term-title.zsh
-  source ${zsh_dir}/lib/navigation.zsh
-  source ${zsh_dir}/lib/expansions.zsh
-  source ${zsh_dir}/lib/key-bindings.zsh
+  _safe_source "${zsh_dir}/lib/colors.zsh"
+  _safe_source "${zsh_dir}/lib/cursor.zsh"
+  _safe_source "${zsh_dir}/lib/history.zsh"
+  _safe_source "${zsh_dir}/lib/surround.zsh"
+  _safe_source "${zsh_dir}/lib/completion.zsh"
+  _safe_source "${zsh_dir}/lib/term-title.zsh"
+  _safe_source "${zsh_dir}/lib/navigation.zsh"
+  _safe_source "${zsh_dir}/lib/expansions.zsh"
+  _safe_source "${zsh_dir}/lib/key-bindings.zsh"
 fi
 
 # If using Pyenv, import the shell integration if availible
@@ -106,17 +115,29 @@ if [[ -d "$HOME/.deno" ]]; then
   export PATH="$DENO_INSTALL/bin:$PATH"
 fi
 
+# NVM (Node Version Manager) - lazy load for performance
+# export NVM_DIR="$HOME/.config/nvm"
+# [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
+# Add local bin to PATH (if directory exists)
+[[ -d "$HOME/.local/bin" ]] && export PATH="$HOME/.local/bin:$PATH"
+
 # Add Zoxide (for cd, quick jump) to shell
 if hash zoxide 2> /dev/null; then
     eval "$(zoxide init zsh)"
 fi
 
 # If not running in nested shell, then show welcome message :)
-if [[ "${SHLVL}" -lt 2 ]] && \
-  { [[ -z "$SKIP_WELCOME" ]] || [[ "$SKIP_WELCOME" == "false" ]]; }; then
-  welcome
-fi
+# if [[ "${SHLVL}" -lt 2 ]] && \
+#   { [[ -z "$SKIP_WELCOME" ]] || [[ "$SKIP_WELCOME" == "false" ]]; }; then
+#   welcome
+# fi
 
-# bun completions
-[ -s "/home/alicia/.bun/_bun" ] && source "/home/alicia/.bun/_bun"
-. "/home/alicia/.deno/env"
+# Bun completions (if installed)
+[[ -s "$HOME/.bun/_bun" ]] && source "$HOME/.bun/_bun"
+
+# Deno environment (if installed)
+[[ -f "$HOME/.deno/env" ]] && source "$HOME/.deno/env"
+
+# To customize prompt, run `p10k configure` or edit ~/.config/zsh/.p10k.zsh.
+[[ ! -f ~/.config/zsh/.p10k.zsh ]] || source ~/.config/zsh/.p10k.zsh

@@ -311,13 +311,13 @@
     human = "name-rev --name-only --refs=refs/heads/*"
 
 # -----------------------------------------------------------------------------
-# Git LFS
+# Git LFS (commented out - uncomment if git-lfs is installed)
 # -----------------------------------------------------------------------------
-[filter "lfs"]
-    clean = git-lfs clean -- %f
-    smudge = git-lfs smudge -- %f
-    process = git-lfs filter-process
-    required = true
+# [filter "lfs"]
+#     clean = git-lfs clean -- %f
+#     smudge = git-lfs smudge -- %f
+#     process = git-lfs filter-process
+#     required = true
 
 # -----------------------------------------------------------------------------
 # If you have Sourcetree installed, you can leave this. Otherwise, comment out.
