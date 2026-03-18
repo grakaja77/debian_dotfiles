@@ -1,203 +1,117 @@
+# ── Navigation ──────────────────────────────────────────────────────────────
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias ~='cd ~'
+alias cdd='cd /opt/docker'
 
-command_exists () {
-  hash "$1" 2> /dev/null
-}
-
-alias_not_used () {
-  ! alias "$1" >/dev/null && ! hash "$1" 2> /dev/null
-}
-
-# Single-letter aliases, for frequently used basics, only if not already set
-if alias_not_used a; then; alias a='alias'; fi
-if alias_not_used c; then; alias c='clear'; fi
-if alias_not_used d; then; alias c='date'; fi
-if alias_not_used e; then; alias e='exit'; fi
-if alias_not_used f; then; alias f='find'; fi
-if alias_not_used g; then; alias g='grep'; fi
-if alias_not_used h; then; alias h='history'; fi
-if alias_not_used i; then; alias i='id'; fi
-if alias_not_used j; then; alias j='jobs'; fi
-if alias_not_used l; then; alias l='ls'; fi
-if alias_not_used m; then; alias m='man'; fi
-if alias_not_used n; then; alias m='nc'; fi
-if alias_not_used p; then; alias p='pwd'; fi
-if alias_not_used s; then; alias s='sudo'; fi
-if alias_not_used t; then; alias t='touch'; fi
-if alias_not_used v; then; alias v='vim'; fi
-
-# File listing options
-alias lr='ls -R' # List files in sub-directories, recursivley
-alias lf='ls -A | grep' # Use grep to find files
-alias lc='find . -type f | wc -l' # Shows number of files
-alias ld='ls -l | grep "^d"' # List directories only
-
-# If exa installed, then use exa for some ls commands
-if command_exists exa ; then
-  alias l='exa -aF --icons' # Quick ls
-  alias la='exa -aF --icons' # List all
-  alias ll='exa -laF --icons' # Show details
-  alias lm='exa -lahr --color-scale --icons -s=modified' # Recent
-  alias lb='exa -lahr --color-scale --icons -s=size' # Largest / size
-  alias tree='f() { exa -aF --tree -L=${1:-2} --icons };f'
+# ── Listing ─────────────────────────────────────────────────────────────────
+if command -v eza &>/dev/null; then
+  alias ls='eza --color=always --group-directories-first'
+  alias ll='eza -lah --git --group-directories-first'
+  alias la='eza -a --group-directories-first'
+  alias l='eza -lh --group-directories-first'
+  alias lt='eza -lah --sort=modified'        # sort by modified time
+  alias tree='eza --tree --level=3'
 else
-  alias la='ls -A' # List all files/ includes hidden
-  alias ll='ls -lAFh' # List all files, with full details
-  alias lb='ls -lhSA' # List all files sorted by biggest
-  alias lm='ls -tA -1' # List files sorted by last modified
+  alias ls='ls --color=auto'
+  alias ll='ls -lah'
+  alias la='ls -A'
+  alias l='ls -lh'
+  alias lt='ls -lahtr'
 fi
 
-# List contents of packed file, depending on type
-ls-archive () {
-  if [ -z "$1" ]; then
-    echo "No archive specified"
-    return;
-  fi
-  if [[ ! -f $1 ]]; then
-    echo "File not found"
-    return;
-  fi
-  ext="${1##*.}"
-  if [ $ext = 'zip' ]; then
-    unzip -l $1
-  elif [ $ext = 'rar' ]; then
-    unrar l $1
-  elif [ $ext = 'tar' ]; then
-    tar tf $1
-  elif [ $ext = 'tar.gz' ]; then
-    echo $1
-  elif [ $ext = 'ace' ]; then
-    unace l $1
-  else
-    echo "Unknown Archive Format"
-  fi
-}
+# ── Safety Nets ─────────────────────────────────────────────────────────────
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+alias ln='ln -i'
 
-alias lz='ls-archive'
+# ── Shell ────────────────────────────────────────────────────────────────────
+alias c='clear'
+alias h='history'
+alias reload='source ~/.zshenv && source ${ZDOTDIR}/.zshrc'
+alias zshrc='$EDITOR ${ZDOTDIR}/.zshrc'
+alias path='echo $PATH | tr ":" "\n"'
 
-# Make directory, and cd into it
-mkcd() {
-  local dir="$*";
-  mkdir -p "$dir" && cd "$dir";
-}
+# ── System ───────────────────────────────────────────────────────────────────
+alias update='sudo apt update && sudo apt upgrade -y'
+alias install='sudo apt install -y'
+alias remove='sudo apt remove'
+alias autoremove='sudo apt autoremove -y'
+alias df='df -h'
+alias du='du -h'
+alias free='free -h'
+alias mem='free -h | awk "/^Mem:/ {print \$3\"/\"\$2}"'
+alias dmesg='dmesg --color=always | less -R'
+alias services='systemctl list-units --type=service --state=running'
+alias sctl='sudo systemctl'
+alias jctl='sudo journalctl'
+alias logs='sudo journalctl -f'
+alias meminfo='free -m -l -t'
+alias cpuinfo='lscpu'
+alias distro='cat /etc/*-release'
 
-# Make dir and copy
-mkcp() {
-  local dir="$2"
-  local tmp="$2"; tmp="${tmp: -1}"
-  [ "$tmp" != "/" ] && dir="$(dirname "$2")"
-  [ -d "$dir" ] ||
-    mkdir -p "$dir" &&
-    cp -r "$@"
-}
+# ── Networking ───────────────────────────────────────────────────────────────
+alias ports='ss -tulnp'
+alias myip='curl -s ifconfig.me && echo'
+alias localip="hostname -I | awk '{print \$1}'"
+alias ping='ping -c 5'
+alias wget='wget -c'
 
-# Move dir and move into it
-mkmv() {
-  local dir="$2"
-  local tmp="$2"; tmp="${tmp: -1}"
-  [ "$tmp" != "/" ] && dir="$(dirname "$2")"
-  [ -d "$dir" ] ||
-      mkdir -p "$dir" &&
-      mv "$@"
-}
+# ── Files & Text ─────────────────────────────────────────────────────────────
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias diff='diff --color=auto'
+alias mkdir='mkdir -pv'
 
-# Getting outa directories
-alias c~='cd ~'
-alias c.='cd ..'
-alias c..='cd ../../'
-alias c...='cd ../../../'
-alias c....='cd ../../../../'
-alias c.....='cd ../../../../'
-alias cg='cd `git rev-parse --show-toplevel`' # Base of git project
-
-# Finding files and directories
-alias dud='du -d 1 -h' # List sizes of files within directory
-alias duf='du -sh *' # List total size of current directory
-alias ff='find . -type f -name' # Find a file by name within current directory
-(( $+commands[fd] )) || alias fd='find . -type d -name' # Find direcroy by name
-
-# Command line history
-alias h='history' # Shows full history
-alias h-search='fc -El 0 | grep' # Searchses for a word in terminal history
-alias top-history='history 0 | awk '{print $2}' | sort | uniq -c | sort -n -r | head' 
-alias histrg='history -500 | rg' # Rip grep search recent history
-
-# Fuzzy search through command history with Ctrl+R
-if [[ ! "$terminfo[kcuu1]" ]]; then
-  bindkey '^R' fzf-history-widget
+# bat — syntax-highlighted cat (falls back to plain cat)
+if command -v bat &>/dev/null; then
+  alias cat='bat --style=plain'
+  alias catp='bat'
+elif command -v batcat &>/dev/null; then
+  alias cat='batcat --style=plain'
+  alias catp='batcat'
 fi
 
-fzf-history-widget() {
-  local selected_command=$(fc -rl 1 | fzf --height 40% --reverse --tac | sed -E 's/ *[0-9]+\*? +//')
-  LBUFFER="$selected_command"
-  zle redisplay
-}
-zle -N fzf-history-widget
-
-# Clearing terminal
-if command_exists hr ; then
-  alias c='clear && hr_color='\033[0;37m' && hr'
-else
-  alias c='clear'
+# fd — better find (Ubuntu/Debian installs as fdfind)
+if command -v fd &>/dev/null; then
+  alias find='fd'
+elif command -v fdfind &>/dev/null; then
+  alias fd='fdfind'
+  alias find='fdfind'
 fi
 
-# Command line head / tail shortcuts
-alias -g H='| head' # Pipes output to head (the first part of a file)
-alias -g T='| tail' # Pipes output to tail (the last part of a file)
-alias -g G='| grep' # Pipes output to grep to search for some word
-alias -g L="| less" # Pipes output to less, useful for paging
-alias -g M="| most" # Pipes output to more, useful for paging
-alias -g LL="2>&1 | less" # Writes stderr to stdout and passes it to less
-alias -g CA="2>&1 | cat -A" # Writes stderr to stdout and passes it to cat
-alias -g NE="2> /dev/null" # Silences stderr
-alias -g NUL="> /dev/null 2>&1" # Silences both stdout and stderr
-alias -g P="2>&1| pygmentize -l pytb" # Writes stderr to stdout, and passes to pygmentize
+# ── Process ──────────────────────────────────────────────────────────────────
+alias psa='ps aux'
+alias psg='ps aux | grep -v grep | grep'
+alias k9='kill -9'
 
-# Use color diff, if availible
-if command_exists colordiff ; then
-  alias diff='colordiff'
+# ── Docker (only if installed) ───────────────────────────────────────────────
+if command -v docker &>/dev/null; then
+  alias d='docker'
+  alias dc='docker compose'
+  alias dps='docker ps'
+  alias dpsa='docker ps -a'
+  alias dlog='docker logs -f'
+  alias dex='docker exec -it'
+  alias dprune='docker system prune -f'
 fi
 
-# Find + manage aliases
-alias al='alias | less' # List all aliases
-alias as='alias | grep' # Search aliases
-alias ar='unalias' # Remove given alias
+# ── Pipe shortcuts ───────────────────────────────────────────────────────────
+alias -g H='| head'
+alias -g T='| tail'
+alias -g G='| grep'
+alias -g L='| less'
+alias -g NE='2> /dev/null'
+alias -g NUL='> /dev/null 2>&1'
 
-# System Monitoring
-alias meminfo='free -m -l -t' # Show free and used memory
-alias memhog='ps -eo pid,ppid,cmd,%mem --sort=-%mem | head' # Processes consuming most mem
-alias cpuhog='ps -eo pid,ppid,cmd,%cpu --sort=-%cpu | head' # Processes consuming most cpu
-alias cpuinfo='lscpu' # Show CPU Info
-alias distro='cat /etc/*-release' # Show OS info
-alias ports='netstat -tulanp' # Show open ports
-
-# Copy / pasting
-alias cpwd='pwd | pbcopy' # Copy current path
-alias pa='pbpaste' # Paste clipboard contents
-
-# App Specific
-if command_exists code ; then; alias vsc='code .'; fi # Launch VS Code in current dir
-if command_exists cointop ; then; alias crypto='cointop'; fi
-if command_exists gotop ; then; alias gto='gotop'; fi
-
-# External Services
-alias myip='curl icanhazip.com'
+# ── External Services ────────────────────────────────────────────────────────
 alias weather='curl wttr.in'
 alias weather-short='curl "wttr.in?format=3"'
 alias cheat='curl cheat.sh/'
-alias tinyurl='curl -s "http://tinyurl.com/api-create.php?url='
-alias joke='curl https://icanhazdadjoke.com'
-alias hackernews='curl hkkr.in'
-alias worldinternet='curl https://status.plaintext.sh/t'
 
-# Random lolz
-alias cls='clear;ls' # Clear and ls
-alias plz="fc -l -1 | cut -d' ' -f2- | xargs sudo" # Re-run last cmd as root
-alias yolo='git add .; git commit -m "YOLO"; git push origin master'
-alias when='date' # Show date
-alias whereami='pwd'
-alias dog='cat'
-alias gtfo='exit'
-
-# Alias for install script
-alias dotfiles="${DOTFILES_DIR:-$HOME/Documents/config/dotfiles}/install.sh"
+# ── Dotfiles ─────────────────────────────────────────────────────────────────
+alias dotfiles="${DOTFILES_DIR:-$HOME/.dotfiles}/install.sh"
 alias dots="dotfiles"

@@ -1,7 +1,7 @@
 
 ######################################################################
 # ZSH aliases and helper functions for Rust development with Cargo   #
-# Licensed under MIT (C) Alicia Sykes 2022 <https://aliciasykes.com> #
+# Originally by Alicia Sykes, MIT licensed                          #
 ######################################################################
 
 # Cargo Basic Commands

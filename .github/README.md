@@ -253,18 +253,13 @@ The setup script ([`install.sh`](https://github.com/Lissy93/dotfiles/blob/master
   - Setup / update symlinks each file to it's correct location on disk
 - **System Config**
   - Checks default shell, if not yet set, will prompt to set to zsh
-  - Installs Vim plugins via Plug
-  - Installs Tmux plugins via TPM
-  - Installs ZSH plugins via Antigen
-  - Prompts to apply system preferences (for compatible OS / DE)
-  - On MacOS arranges apps into folders within the Launchpad view
-  - On MacOS prompts to set essential privacy + security settings
-  - On MacOS prompts to set system preferences and app settings
+  - Installs ZSH plugins via zinit
+  - Prompts to apply desktop preferences via dconf (if running a desktop)
 - **App Installations**
-  - On MacOS if Homebrew is not yet installed, will prompt to install it
-  - On MacOS will prompt to install user apps listed in Brewfile, via Homebrew
-  - On Linux will prompt to install listed CLI apps via native package manager (pacman or apt)
-  - On Linux desktop systems, will prompt to istall desktop apps via Flatpak
+  - If Homebrew is not yet installed, will prompt to install it
+  - Will prompt to install packages listed in Brewfile, via Homebrew
+  - Will prompt to install listed CLI apps via apt
+  - On desktop systems, will prompt to install desktop apps via Flatpak
   - Checks OS is up-to-date, prompts to install updates if available
 - **Finishing up**
   - Outputs time taken and a summary of changes applied

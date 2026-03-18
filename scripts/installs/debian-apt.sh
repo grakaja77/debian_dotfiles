@@ -18,9 +18,7 @@
 debian_apps=(
   # Essentials
   'git'           # Version controll
-  'neovim'        # Text editor
   'ranger'        # Directory browser
-  'tmux'          # Term multiplexer
   'wget'          # Download files
   'zsh'           # Shell of choice
 

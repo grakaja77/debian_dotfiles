@@ -1,6 +1,6 @@
 ######################################################################
 # Node.js / NVM configuration                                        #
-# Licensed under MIT (C) Alicia Sykes 2022 <https://aliciasykes.com> #
+# Originally by Alicia Sykes, MIT licensed                          #
 ######################################################################
 
 # NVM directory

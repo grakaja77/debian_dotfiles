@@ -2,7 +2,7 @@
 ######################################################################
 # ZSH aliases and helper functions for working with Git              #
 #                                                                    #
-# Licensed under MIT (C) Alicia Sykes 2022 <https://aliciasykes.com> #
+# Originally by Alicia Sykes, MIT licensed                          #
 ######################################################################
 
 # Basics
@@ -93,10 +93,10 @@ function jump-to-git-root {
 
 alias gj='jump-to-git-root'
 
-# Shorthand clone (e.g. $ clone lissy93/dotfiles)
+# Shorthand clone (e.g. $ clone grakaja77/debian_dotfiles)
 function clone {
   default_service='github.com' # Used if full URL isn't specified
-  default_username='lissy93' # Used if repo org / username isn't specified
+  default_username='grakaja77' # Used if repo org / username isn't specified
   use_ssh=true # Use SSH instead of HTTPS
   user_input=$1
   target=${2:-''}
@@ -105,7 +105,7 @@ function clone {
     echo -e 'This will clone a git repo, and cd into it.';
     echo -e 'Either specify repo name, oe user/repo, or a full URL.'
     echo -e 'If no target directory is specified, the repo name will be used.'
-    echo -e 'E.g. `$ clone lissy93/dotfiles`'
+    echo -e 'E.g. `$ clone grakaja77/debian_dotfiles`'
     return;
   # No input specified, prompt user
   elif [ $# -eq 0 ]; then
