@@ -157,9 +157,9 @@ function gsync {
   fi
   git remote -v
   git fetch upstream
-  git pull upstream master
-  git checkout master
-  git rebase upstream/master
+  git pull upstream main
+  git checkout main
+  git rebase upstream/main
 }
 
 # Make git commit with -m
@@ -175,12 +175,12 @@ function gcommit {
 alias gcm="gcommit"
 
 # Fetch, rebase and push updates to current branch 
-# Optionally specify target, defaults to 'master'
+# Optionally specify target, defaults to 'main'
 function gfetchrebase {
   if ! [ -z "$1" ]; then
     branch=$1
   else
-    branch='master'
+    branch='main'
   fi
   git fetch upstream
   git rebase upstream/$branch
